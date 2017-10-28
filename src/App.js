@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 var todos = [
-  {
+/*  {
     title: 'First todo',
     responsible: 'Antoine',
     description: 'todo description',
@@ -19,7 +19,7 @@ var todos = [
     responsible: 'Antoine',
     description: 'todo description',
     priority: 'high'
-  }
+  }*/
 ]
 
 class App extends Component {
@@ -47,11 +47,23 @@ class App extends Component {
   }
 
   deleteTask(index){
-    this.setState({
-      todos: this.state.todos.filter(function(e, i){
-        return i !== index;
-      })
-    })
+
+    fetch('http://localhost:3008/tasks/' + this.state.todos[index]._id, {
+      method: 'delete',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+       }
+    }).then(results => {
+      return results.json();
+    }).then(data => {
+      this.setState({
+        todos: this.state.todos.filter(function(e, i){
+          return i !== index;
+        })
+      });
+      alert(data['message']);
+    });
   }
 
   onAddTodo(todo){
