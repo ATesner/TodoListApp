@@ -32,6 +32,20 @@ class App extends Component {
     }
   }
 
+  componentDidMount(){
+    fetch('http://localhost:3008/tasks', {
+      method: 'get',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json'
+      }
+    }).then((results) =>{
+      return results.json();
+    }).then(data => {
+      this.setState({ todos: data });
+    });
+  }
+
   deleteTask(index){
     this.setState({
       todos: this.state.todos.filter(function(e, i){
@@ -101,13 +115,31 @@ class TodoInput extends Component {
 
   handleSubmit(event){
     event.preventDefault();
-    this.props.onAddTodo(this.state);
-    this.setState({
-      title: '',
-      responsible: '',
-      description: '',
-      priority: 'low'
-    })
+    console.log(this.state);
+    
+    fetch('http://localhost:3008/tasks', {
+      method: 'post',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: this.state.title,
+        description: this.state.description,
+        responsible: this.state.responsible,
+        priority: this.state.priority
+      })
+    }).then((results) =>{
+      console.log('Task added ' + results.json());
+      this.props.onAddTodo(this.state);
+      this.setState({
+        title: '',
+        responsible: '',
+        description: '',
+        priority: 'low'
+      });
+    });
+
   }
 
   render() {
